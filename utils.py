@@ -1,9 +1,13 @@
 import json
+import random
 import time
 from functools import wraps
 
 from loguru import logger
 from tqdm import tqdm
+from web3 import Web3
+
+from models.chain import EthMainet
 
 
 def read_from_json(file_path):
@@ -26,26 +30,52 @@ def read_from_txt(file_path):
         logger.exception(f"Encountered an error while reading a TXT file '{file_path}': {str(e)}.")
 
 
-def gas_delay(gas_threshold: int, delay_seconds: tuple):
+def gas_delay(gas_threshold: int, delay_range: list):
     def decorator(func):
         @wraps(func)
-        def wrapper(self, *args, **kwargs):
+        def wrapper(*args, **kwargs):
             while True:
-                current_gas_price = self.w3.eth.gas_price
-                logger.info(current_gas_price)
-                if current_gas_price > gas_threshold:
-                    logger.warning(f"Gas price above set threshold. Waiting for {delay_seconds} seconds...")
-                    with tqdm(
-                        total=delay_seconds, desc="Waiting", unit="s", dynamic_ncols=True, colour="blue"
-                    ) as pbar:
-                        for _ in range(delay_seconds):
+                current_eth_gas_price = get_eth_gas_fee()
+                threshold = Web3.to_wei(gas_threshold, "gwei")
+                if current_eth_gas_price > threshold:
+                    random_delay = random.randint(delay_range[0], delay_range[1])
+
+                    logger.warning(
+                        f"Current gas fee '{current_eth_gas_price}' wei > Gas threshold '{threshold}' wei. Waiting for {random_delay} seconds..."
+                    )
+
+                    with tqdm(total=random_delay, desc="Waiting", unit="s", dynamic_ncols=True, colour="blue") as pbar:
+                        for _ in range(random_delay):
                             time.sleep(1)
                             pbar.update(1)
                 else:
                     break
 
-            return func(self, *args, **kwargs)
+            return func(*args, **kwargs)
 
         return wrapper
 
     return decorator
+
+
+def wait(delay_range: list):
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            result = func(*args, **kwargs)
+            random_delay = random.randint(delay_range[0], delay_range[1])
+            logger.info(f"Sleeping for {random_delay} seconds...")
+            with tqdm(total=random_delay, desc="Waiting", unit="s", dynamic_ncols=True, colour="blue") as pbar:
+                for _ in range(random_delay):
+                    time.sleep(1)
+                    pbar.update(1)
+            return result
+
+        return wrapper
+
+    return decorator
+
+
+def get_eth_gas_fee():
+    w3 = Web3(Web3.HTTPProvider(EthMainet.rpc))
+    return w3.eth.gas_price

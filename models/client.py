@@ -5,11 +5,20 @@ from models import Chain
 
 
 class Client:
-    def __init__(self, private_key: str, chain: Chain):
+    def __init__(self, private_key: str, chain: Chain, proxy: str):
         self.private_key = private_key
         self.chain = chain
-        self.w3 = Web3(Web3.HTTPProvider(endpoint_uri=self.chain.rpc))
+        self.proxy = proxy
+        self.w3 = self.init_web3()
         self.public_key = Web3.to_checksum_address(self.w3.eth.account.from_key(private_key=private_key).address)
+
+    def init_web3(self):
+        if self.proxy:
+            request_kwargs = {"proxies": {"https": self.proxy, "http": self.proxy}}
+        else:
+            request_kwargs = {}
+
+        return Web3(Web3.HTTPProvider(endpoint_uri=self.chain.rpc, request_kwargs=request_kwargs))
 
     def send_transaction(
         self,
@@ -18,7 +27,6 @@ class Client:
         from_=None,
         gas_multiplier=1.0,
         value=None,
-        max_limit=None,
     ):
         if not from_:
             from_ = self.public_key
@@ -39,10 +47,7 @@ class Client:
         tx_params["gasPrice"] = self.w3.eth.gas_price
 
         try:
-            if max_limit:
-                tx_params["gas"] = max_limit
-            else:
-                tx_params["gas"] = int(self.w3.eth.estimate_gas(tx_params) * gas_multiplier)
+            tx_params["gas"] = int(self.w3.eth.estimate_gas(tx_params) * gas_multiplier)
         except Exception as e:
             logger.error(f"Transaction failed: {e}")
             return None

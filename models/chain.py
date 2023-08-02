@@ -17,3 +17,20 @@ class Chain:
 
     def __str__(self):
         return f"{self.name}"
+
+
+ZkEra = Chain(
+    name="zkSync Era Mainnet",
+    rpc="https://zksync-era.blockpi.network/v1/rpc/public",
+    chain_id=324,
+    coin_symbol="ETH",
+    explorer="https://explorer.zksync.io/",
+)
+
+EthMainet = Chain(
+    name="Ethereum Mainnet",
+    rpc="https://rpc.ankr.com/eth",
+    chain_id=1,
+    coin_symbol="ETH",
+    explorer="https://etherscan.io/",
+)
