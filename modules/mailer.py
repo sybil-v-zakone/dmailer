@@ -17,6 +17,6 @@ def run_mailer():
         mailer_client = MailerClient(private_key=private_key, proxy=proxy)
 
         for _ in range(random.randint(TX_COUNT[0], TX_COUNT[1])):
-            mailer_client.func()
+            mailer_client.send_mail()
 
     logger.success("All accounts are finished.")
