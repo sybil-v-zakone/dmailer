@@ -30,7 +30,7 @@ PRIVATE_KEYS_PATH = "data/private_keys.txt"
 PROXIES_PATH = "data/proxies.txt"
 
 # range of transactions to be sent on each accout
-TX_COUNT = [1, 3]
+TX_COUNT = [2, 4]
 
 # range for time delay between each transaction in seconds
-TX_DELAY_RANGE = [5, 10]
+TX_DELAY_RANGE = [60, 120]
