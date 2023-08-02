@@ -22,6 +22,14 @@ ZkEra = Chain(
     explorer="https://explorer.zksync.io/",
 )
 
+EthMainet = Chain(
+    name="Ethereum Mainnet",
+    rpc="https://rpc.ankr.com/eth",
+    chain_id=1,
+    coin_symbol="ETH",
+    explorer="https://etherscan.io/",
+)
+
 GAS_MULTIPLIER = 1.1
 
 USE_PROXY = False
