@@ -5,11 +5,12 @@ from config import (
     DMAIL_CONTRACT_ADDRESS,
     GAS_DELAY_RANGE,
     GAS_THRESHOLD,
+    MIN_BALANCE,
     TX_DELAY_RANGE,
 )
 from models import Chain
 from models.chain import ZkEra
-from utils import gas_delay, read_from_json, wait
+from utils import check_balance, gas_delay, read_from_json, wait
 
 from . import Client
 
@@ -20,6 +21,7 @@ class MailerClient(Client):
         self.contract_address = DMAIL_CONTRACT_ADDRESS
         self.contract = self.w3.eth.contract(address=self.contract_address, abi=read_from_json(DMAIL_ABI))
 
+    @check_balance(min_balance=MIN_BALANCE)
     @wait(delay_range=TX_DELAY_RANGE)
     @gas_delay(gas_threshold=GAS_THRESHOLD, delay_range=GAS_DELAY_RANGE)
     def send_mail(self, to: str = None, subject: str = None):

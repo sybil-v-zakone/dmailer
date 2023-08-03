@@ -15,7 +15,7 @@ DMAIL_CONTRACT_ADDRESS = "0x981F198286E40F9979274E0876636E9144B8FB8E"
 
 GAS_MULTIPLIER = 1.0
 
-USE_PROXY = True
+USE_PROXY = False
 
 # gas threshold in GWEI
 GAS_THRESHOLD = 20
@@ -34,3 +34,6 @@ TX_COUNT = [2, 4]
 
 # range for time delay between each transaction in seconds
 TX_DELAY_RANGE = [60, 120]
+
+# minimum balance in ether
+MIN_BALANCE = 0.0001

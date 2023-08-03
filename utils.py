@@ -79,3 +79,18 @@ def wait(delay_range: list):
 def get_eth_gas_fee():
     w3 = Web3(Web3.HTTPProvider(EthMainet.rpc))
     return w3.eth.gas_price
+
+
+def check_balance(min_balance):
+    def decorator(func):
+        @wraps(func)
+        def wrapper(self, *args, **kwargs):
+            balance = self.w3.eth.get_balance(self.public_key)
+            if balance < Web3.to_wei(min_balance, "ether"):
+                logger.error(f"Balance is below minimum at {self.public_key}.")
+                return False
+            return func(self, *args, **kwargs)
+
+        return wrapper
+
+    return decorator
