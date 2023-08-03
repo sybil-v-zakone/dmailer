@@ -40,8 +40,3 @@ class MailerClient(Client):
         if self.verify_tx(tx_hash=tx_hash):
             return True
         return False
-
-    @wait(delay_range=TX_DELAY_RANGE)
-    @gas_delay(gas_threshold=GAS_THRESHOLD, delay_range=GAS_DELAY_RANGE)
-    def func(self):
-        logger.info("FUNC!")
