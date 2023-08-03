@@ -14,7 +14,7 @@ class Client:
 
     def init_web3(self):
         if self.proxy:
-            request_kwargs = {"proxies": {"https": self.proxy, "http": self.proxy}}
+            request_kwargs = {"proxies": {"https": f"http://{self.proxy}", "http": f"http://{self.proxy}"}}
         else:
             request_kwargs = {}
 
